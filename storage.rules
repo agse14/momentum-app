@@ -1,0 +1,16 @@
+rules_version = '2';
+
+service firebase.storage {
+	match /b/{bucket}/o {
+		// Lectura pública de imágenes del sitio
+		match /site/{allPaths=**} {
+			allow read: if true;
+			allow write: if request.auth != null && request.auth.token.admin == true;
+		}
+
+		match /{allPaths=**} {
+			allow read: if true;
+			allow write: if request.auth != null && request.auth.token.admin == true;
+		}
+	}
+}

@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+	match /databases/{database}/documents {
+
+		function isAdmin() {
+			return request.auth != null && request.auth.token.admin == true;
+		}
+
+		// Contenido público: lectura abierta, escritura solo admin
+		match /site/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+		match /sections/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+		match /pages/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+		match /products/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+		match /news/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+		match /menu/{doc=**} {
+			allow read: if true;
+			allow write: if isAdmin();
+		}
+
+		// Perfil de administradores (solo lectura/escritura propia)
+		match /admins/{uid} {
+			allow read: if request.auth != null && request.auth.uid == uid;
+			allow write: if false;
+		}
+
+		match /{document=**} {
+			allow read, write: if false;
+		}
+	}
+}
